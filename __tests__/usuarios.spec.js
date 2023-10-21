@@ -1,15 +1,14 @@
-import  request  from 'supertest'
 import usuarios from '../requisicoes/usuarios'
 
 describe('POST / Usuários', () => {
     test('CT01 - Validar tentiva de criação de usuário com email já em uso', async () => {
-        await usuarios.postUsuarios({
+        await usuarios.metodoPost({
                 "nome": "Luiz",
                 "email": "Luizeduardo@gmail.com",
                 "password": "xyz12345",
                 "administrador": "false"
             })
-        const resposta = await usuarios.postUsuarios({ 
+        const resposta = await usuarios.metodoPost({ 
                 "nome": "Luiz Eduardo",
                 "email": "Luizeduardo@gmail.com",
                 "password": "xyz12345",
@@ -21,7 +20,7 @@ describe('POST / Usuários', () => {
 
     test('CT02 - Validar criação de usuário válido', async () => {
         const email = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const resposta = await usuarios.postUsuarios({
+        const resposta = await usuarios.metodoPost({
                 "nome": "Luiz",
                 "email": email,
                 "password": "xyz12345",
@@ -35,14 +34,14 @@ describe('POST / Usuários', () => {
 
 describe('GET / Usuários', () => {
     test('CT01 - Listar usuários cadastrados', async () => {
-        const resposta = await usuarios.getTodosUsuarios()
+        const resposta = await usuarios.metodoGetTodos()
         expect(resposta.statusCode).toBe(200)
         expect(resposta.body).toHaveProperty("quantidade")
         expect(resposta.body).toHaveProperty("usuarios")
     })
 
     test('CT02 - Filtrar por usuário com flag Administrador ativada', async () => {
-        const resposta = await usuarios.getFiltroUsuarios(
+        const resposta = await usuarios.metodoGetFiltro(
             {
                 administrador: 'true'
             })
@@ -56,7 +55,7 @@ describe('GET / Usuários', () => {
 describe('PUT / Usuários', () => {
     test('CT01 - Validar a edição de um usuário', async () => {
         const emailFormatado = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const respostaPost = await usuarios.postUsuarios({
+        const respostaPost = await usuarios.metodoPost({
             "nome": "Luiz Alterar",
             "email": emailFormatado,
             "password": "xyz12345",
@@ -64,7 +63,7 @@ describe('PUT / Usuários', () => {
         })   
         const { _id } = respostaPost.body
         const { email } = respostaPost.body
-        const respostaPut = await usuarios.putUsuarios(_id, 
+        const respostaPut = await usuarios.metodoPut(_id, 
             {
             "nome": "Luiz Alterado",
             "email": emailFormatado,
@@ -73,7 +72,7 @@ describe('PUT / Usuários', () => {
         })
         expect(respostaPut.statusCode).toBe(200)
         expect(respostaPut.body.message).toBe('Registro alterado com sucesso')
-        const respostaGet = await usuarios.getFiltroUsuarios({
+        const respostaGet = await usuarios.metodoGetFiltro({
             _id: _id
         })
         expect(respostaGet.statusCode).toBe(200)
@@ -83,7 +82,7 @@ describe('PUT / Usuários', () => {
     test('CT02 - Tentar editar um usuário não existente', async () => {
         const registro = new Date().getTime()
         const email = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const respostaPut = await usuarios.putUsuarios(registro, 
+        const respostaPut = await usuarios.metodoPut(registro, 
             {
             "nome": "Luiz Eduardo",
             "email": email,
@@ -97,26 +96,24 @@ describe('PUT / Usuários', () => {
     })
 })
 
-describe.skip('Delete / Usuários', () => {
+describe('Delete / Usuários', () => {
     test('CT01 - Validar a exclusão de um usuário', async () => {
         const email = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const respostaPost = await usuarios.postUsuarios({
+        const respostaPost = await usuarios.metodoPost({
             "nome": "Luiz Exclusão",
             "email": email,
             "password": "123456",
             "administrador": "false"
         })
         const { _id } = respostaPost.body
-        const respostaDelete = await request(baseUrl)
-            .delete(`/usuarios/${_id}`)
+        const respostaDelete = await usuarios.metodoDelete(_id)
         expect(respostaDelete.statusCode).toBe(200)
         expect(respostaDelete.body.message).toBe('Registro excluído com sucesso')
     })
 
     test('CT02 - Tentar exclusão de um usuário que não existe', async () => {
-        const _id = new Date().getTime()
-        const respostaDelete = await request(baseUrl)
-            .delete(`/usuarios/${_id}`)
+        const id = new Date().getTime()
+        const respostaDelete = await usuarios.metodoDelete(id)
         expect(respostaDelete.statusCode).toBe(200)
         expect(respostaDelete.body.message).toBe('Nenhum registro excluído')
     })
