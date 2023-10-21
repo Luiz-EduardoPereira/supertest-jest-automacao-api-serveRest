@@ -32,7 +32,7 @@ describe('POST / Usuários', () => {
     })
 })
 
-describe.only('GET / Usuários', () => {
+describe('GET / Usuários', () => {
     test('CT01 - Listar usuários cadastrados', async () => {
         const resposta = await usuarios.metodoGetTodos()
         expect(resposta.statusCode).toBe(200)
