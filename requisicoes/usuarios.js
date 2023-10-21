@@ -1,38 +1,37 @@
-import  request  from 'supertest'
-const baseUrl = "https://agilizei.serverest.dev"
+import { request } from '../resources/config'
 
 class Usuarios {
 
     async metodoPost(body) {
-        return request(baseUrl)
+        return request()
             .post('/usuarios')
             .send(body)
     }
 
     async metodoGetTodos() {
-        return request (baseUrl)
+        return request ()
             .get('/usuarios')
     }
 
     async metodoGetFiltro(filtro) {
-        return request (baseUrl)
+        return request ()
             .get('/usuarios')
             .query(filtro)
     }
 
     async metodoGetPorId(id) {
-        return request (baseUrl)
+        return request ()
             .get(`/usuarios/${id}`)
     }
 
     async metodoPut(id, body) {
-        return request(baseUrl)
+        return request()
             .put(`/usuarios/${id}`)
             .send(body)
     }
 
     async metodoDelete(id) {
-        return request(baseUrl)
+        return request()
             .delete(`/usuarios/${id}`)
     }
 }
