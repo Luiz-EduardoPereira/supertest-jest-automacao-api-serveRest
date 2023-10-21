@@ -19,6 +19,12 @@ class Usuarios {
             .get('/usuarios')
             .query(filtro)
     }
+
+    async putUsuarios(id, body){
+        return request(baseUrl)
+            .put(`/usuarios/${id}`)
+            .send(body)
+    }
 }
 
 export default new Usuarios()
