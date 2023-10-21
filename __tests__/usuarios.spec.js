@@ -1,42 +1,32 @@
 import  request  from 'supertest'
+import usuarios from '../requisicoes/usuarios'
 const baseUrl = "https://agilizei.serverest.dev"
 
 describe('POST / Usuários', () => {
-    test('CT01 - Validar tentiva de criação de usuário com email já em uso', async () => { 
-        await request(baseUrl)
-            .post('/usuarios')
-            .send(
-                {
-                    "nome": "Luiz",
-                    "email": "Luizeduardo@gmail.com",
-                    "password": "xyz12345",
-                    "administrador": "false"
-                }
-            )
-        const resposta = await request(baseUrl)
-            .post('/usuarios')
-            .send(
-                { 
-                    "nome": "Luiz Eduardo",
-                    "email": "Luizeduardo@gmail.com",
-                    "password": "xyz12345",
-                    "administrador": "false"
-                }
-            )
+    test('CT01 - Validar tentiva de criação de usuário com email já em uso', async () => {
+        await usuarios.postUsuarios({
+                "nome": "Luiz",
+                "email": "Luizeduardo@gmail.com",
+                "password": "xyz12345",
+                "administrador": "false"
+            })
+        const resposta = await usuarios.postUsuarios({ 
+                "nome": "Luiz Eduardo",
+                "email": "Luizeduardo@gmail.com",
+                "password": "xyz12345",
+                "administrador": "false"
+            })
             expect(resposta.statusCode).toBe(400)
             expect(resposta.body.message).toBe('Este email já está sendo usado')
     })
 
     test('CT02 - Validar criação de usuário válido', async () => {
         const email = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const resposta = await request(baseUrl)
-            .post('/usuarios')
-            .send({
+        const resposta = await usuarios.postUsuarios({
                 "nome": "Luiz",
                 "email": email,
                 "password": "xyz12345",
                 "administrador": "false"
-
             })
         expect(resposta.statusCode).toBe(201)
         expect(resposta.body.message).toBe('Cadastro realizado com sucesso')
@@ -46,17 +36,15 @@ describe('POST / Usuários', () => {
 
 describe('GET / Usuários', () => {
     test('CT01 - Listar usuários cadastrados', async () => {
-        const resposta = await request(baseUrl)
-            .get('/usuarios')
+        const resposta = await usuarios.getTodosUsuarios()
         expect(resposta.statusCode).toBe(200)
         expect(resposta.body).toHaveProperty("quantidade")
         expect(resposta.body).toHaveProperty("usuarios")
     })
 
     test('CT02 - Filtrar por usuário com flag Administrador ativada', async () => {
-        const resposta = await request(baseUrl)
-            .get('/usuarios')
-            .query({
+        const resposta = await usuarios.getFiltroUsuarios(
+            {
                 administrador: 'true'
             })
         expect(resposta.statusCode).toBe(200)
@@ -67,16 +55,14 @@ describe('GET / Usuários', () => {
 })
 
 describe('PUT / Usuários', () => {
-    test('CT01 - Validar a edição de um usuário', async () => {
+    test.only('CT01 - Validar a edição de um usuário', async () => {
         const emailFormatado = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const respostaPost = await request(baseUrl)
-            .post('/usuarios')
-            .send({
-                "nome": "Luiz Alterar",
-                "email": emailFormatado,
-                "password": "xyz12345",
-                "administrador": "false"
-            })     
+        const respostaPost = await usuarios.postUsuarios({
+            "nome": "Luiz Alterar",
+            "email": emailFormatado,
+            "password": "xyz12345",
+            "administrador": "false"
+        })   
         const { _id } = respostaPost.body
         const { email } = respostaPost.body
         const respostaPut = await request(baseUrl)
@@ -89,11 +75,9 @@ describe('PUT / Usuários', () => {
             })
         expect(respostaPut.statusCode).toBe(200)
         expect(respostaPut.body.message).toBe('Registro alterado com sucesso')
-        const respostaGet = await request(baseUrl)
-            .get('/usuarios/')
-            .query({
-                _id: _id
-            })
+        const respostaGet = await usuarios.getFiltroUsuarios({
+            _id: _id
+        })
         expect(respostaGet.statusCode).toBe(200)
         expect(respostaGet.body.email).toBe(email)
     })
@@ -119,15 +103,12 @@ describe('PUT / Usuários', () => {
 describe('Delete / Usuários', () => {
     test('CT01 - Validar a exclusão de um usuário', async () => {
         const email = `${new Date().getTime()}-Teste@ATPI.com.br`
-        const respostaPost = await request(baseUrl)
-            .post('/usuarios')
-            .send({
-                "nome": "Luiz Exclusão",
-                "email": email,
-                "password": "123456",
-                "administrador": "false"
-
-            })
+        const respostaPost = await usuarios.postUsuarios({
+            "nome": "Luiz Exclusão",
+            "email": email,
+            "password": "123456",
+            "administrador": "false"
+        })
         const { _id } = respostaPost.body
         const respostaDelete = await request(baseUrl)
             .delete(`/usuarios/${_id}`)
