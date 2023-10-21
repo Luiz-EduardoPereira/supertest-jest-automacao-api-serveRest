@@ -32,7 +32,7 @@ describe('POST / Usuários', () => {
     })
 })
 
-describe('GET / Usuários', () => {
+describe.only('GET / Usuários', () => {
     test('CT01 - Listar usuários cadastrados', async () => {
         const resposta = await usuarios.metodoGetTodos()
         expect(resposta.statusCode).toBe(200)
@@ -49,6 +49,22 @@ describe('GET / Usuários', () => {
         Array.from(resposta.body.usuarios).forEach(usuarios => {
             expect(usuarios.administrador).toBe("true")
         })
+    })
+
+    test('CT03 - Filtrar por usuário através do seu ID', async () => {
+        const emailFormatado = `${new Date().getTime()}-Teste@ATPI.com.br`
+        const respostaPost = await usuarios.metodoPost({
+            "nome": "Luiz Busca por ID",
+            "email": emailFormatado,
+            "password": "Xyz123456@",
+            "administrador": "true"
+        })
+        const { _id } = respostaPost.body
+        const respostaPorId = await usuarios.metodoGetPorId(_id)
+
+        expect(respostaPorId.statusCode).toBe(200)
+        expect(respostaPorId.body._id).toBe(_id)
+        expect(respostaPorId.body.email).toBe(emailFormatado)
     })
 })
 

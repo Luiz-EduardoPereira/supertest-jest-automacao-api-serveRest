@@ -3,30 +3,35 @@ const baseUrl = "https://agilizei.serverest.dev"
 
 class Usuarios {
 
-    async metodoPost(body){
+    async metodoPost(body) {
         return request(baseUrl)
             .post('/usuarios')
             .send(body)
     }
 
-    async metodoGetTodos(){
+    async metodoGetTodos() {
         return request (baseUrl)
             .get('/usuarios')
     }
 
-    async metodoGetFiltro(filtro){
+    async metodoGetFiltro(filtro) {
         return request (baseUrl)
             .get('/usuarios')
             .query(filtro)
     }
 
-    async metodoPut(id, body){
+    async metodoGetPorId(id) {
+        return request (baseUrl)
+            .get(`/usuarios/${id}`)
+    }
+
+    async metodoPut(id, body) {
         return request(baseUrl)
             .put(`/usuarios/${id}`)
             .send(body)
     }
 
-    async metodoDelete(id){
+    async metodoDelete(id) {
         return request(baseUrl)
             .delete(`/usuarios/${id}`)
     }
