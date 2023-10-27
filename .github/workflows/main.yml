@@ -1,0 +1,23 @@
+name: Testes Regressivos de API Rest
+
+on: 
+  push:
+    branches:
+      - main
+      
+jobs:
+  run-api-tests: 
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configurar ambiente Node
+        uses: actions/setup-node@v3
+
+      - name: Instalar dependências
+        run: npm install -D
+
+      - name: Executar testes
+        run: npx jest
