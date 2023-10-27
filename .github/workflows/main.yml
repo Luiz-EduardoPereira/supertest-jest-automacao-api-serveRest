@@ -8,16 +8,16 @@ jobs:
   run-api-tests:
     runs-on: ubuntu-latest
 
-  steps:
-    name: Checkout
-    uses: actions/setup@v3
+    steps:
+    - name: Checkout
+      uses: actions/setup@v3
 
-    name: Configurar ambiente Node
-    uses: actions/setup-node@v3
+    - name: Configurar ambiente Node
+      uses: actions/setup-node@v3
 
-    name: Instalar dependências
-    uses: npm install
+    - name: Instalar dependências
+      uses: npm install
 
-    name: Executar testes
-    uses: npx jest
+    - name: Executar testes
+      uses: npx jest
     
