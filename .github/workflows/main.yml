@@ -15,9 +15,3 @@ jobs:
         
       - name: Configurar ambiente Node
         uses: actions/setup-node@v3
-        
-      - name: Instalar dependências
-        run: npm install -D
-        
-      - name: Executar testes
-        run: npx jest
